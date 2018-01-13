@@ -1,10 +1,21 @@
+# -*- coding: UTF-8 -*-
 from urllib.request import urlopen
 import urllib.request
 from bs4 import BeautifulSoup
 import analyze
+import webbrowser
+import platform
 
 DEFAULT_WIDTH = 720
 DEFAULT_HEIGHT = 1280
+
+
+def is_windows():
+    return 'Windows' in platform.system()
+
+
+def is_linux():
+    return 'Linux' in platform.system()
 
 
 def main():
@@ -15,10 +26,23 @@ def main():
     wd = urllib.request.quote(question)
     url = 'https://zhidao.baidu.com/search?ct=17&pn=0&tn=ikaslist&rn=10&fr=wwwt&word={}'.format(
         wd)
+
+    # open chrome to get answer if you use mac..
+    chrome_path = 'open -a /Applications/Google\ Chrome.app %s'
+    if is_windows():
+        # TODO replace your local chrome install path
+        chrome_path = 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe %s'
+
+    if is_linux():
+        chrome_path = '/usr/bin/google-chrome %s'
+
+    webbrowser.get(chrome_path).open(url)
+
     print(url)
     result = urlopen(url)
+    # 解析html页面
     body = BeautifulSoup(result.read(), 'html5lib')
-    good_result_div = body.find(class_='list-header').find('dd')
+    good_result_div = body.find(class_='list-header').find(class_='dd answer')
     second_result_div = body.find(class_='list-inner').find(class_='list')
     if good_result_div is not None:
         good_result = good_result_div.get_text()

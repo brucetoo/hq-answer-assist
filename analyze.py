@@ -1,12 +1,13 @@
+# -*- coding: UTF-8 -*-
 import os
 from PIL import Image
 import pytesseract
 
 # 720*1280分辨率坐标
-left_top_x = 30
-left_top_y = 200
-right_bottom_x = 680
-right_bottom_y = 930
+left_top_x = 80
+left_top_y = 300
+right_bottom_x = 1000
+right_bottom_y = 1000
 
 negate_word = ['没有', '不是', '不会']
 
@@ -35,6 +36,8 @@ def get_question(text):
     if len(text_arr) > 0:
         question = text_arr[0]
         question = question.strip()
+        if question.find('罡') != -1:
+            question = question.replace('罡','是')
         if len(text_arr) > 1:
             for opt in text_arr[1:]:
                 options += '\n' + opt
